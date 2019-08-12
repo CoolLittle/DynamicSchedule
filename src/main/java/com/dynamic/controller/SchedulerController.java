@@ -23,14 +23,15 @@ public class SchedulerController {
     @Autowired
     private ScheduleUtils scheduleUtils;
 
-    /**
-     * 添加新的定时任务
-     * @param param
-     *        taskId 任务ID
-     *        cron 执行时间 示例：0 0/1 * 21 8 ?
-     *        path 待执行的方法全路径名 示例：com.dynamic.customer.CustomerMethod.print
-     * @return
-     */
+	/**
+	 * 添加新的定时任务
+	 * @param param
+	 *        taskId 任务ID
+	 *        cron 执行时间 示例：0 0/1 * 21 8 ?
+	 *        classPath 待执行的方法全路径名 示例：com.dynamic.customer.CustomerMethod
+	 *        methodName 待执行的方法名 示例：print
+	 * @return
+	 */
     @PostMapping("/add-task")
     @ResponseBody
     public JsonResult addScheduleTask(@RequestBody Map<String, String> param) {
