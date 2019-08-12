@@ -20,6 +20,8 @@ public class SchedulerController {
 
     @Autowired
     private DynamicSchedulingHandler handler;
+    @Autowired
+    private ScheduleUtils scheduleUtils;
 
     /**
      * 添加新的定时任务
@@ -43,7 +45,7 @@ public class SchedulerController {
             return json;
         }
         try {
-            TriggerTask triggerTask = ScheduleUtils.getTriggerTask(classPath,methodName,cron);
+            TriggerTask triggerTask = scheduleUtils.getTriggerTask(classPath,methodName,cron);
             handler.addTriggerTask(taskId,triggerTask);
         }catch (Exception e){
             json.setCode(HttpStatus.FAILURE.getValue());
