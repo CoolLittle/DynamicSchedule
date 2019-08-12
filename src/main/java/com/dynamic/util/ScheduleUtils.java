@@ -1,5 +1,6 @@
 package com.dynamic.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.scheduling.support.CronTrigger;
@@ -9,9 +10,11 @@ import org.springframework.web.context.WebApplicationContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+@Slf4j
 public class ScheduleUtils {
 
     public static TriggerTask getTriggerTask(String classPath,String methodName, String cron) throws Exception{
+
 
 
         TriggerTask triggerTask = new TriggerTask(() -> {
@@ -21,15 +24,15 @@ public class ScheduleUtils {
                 Method method = clazz.getMethod(methodName);
                 method.invoke(object,null);
             }catch (ClassNotFoundException e){
-                e.printStackTrace();
+                log.error("定时器执行类未找到：{}",e);
             }catch (InstantiationException e){
-                e.printStackTrace();
+				log.error("定时器执行类初始化异常：{}",e);
             }catch (IllegalAccessException e){
-                e.printStackTrace();
+				log.error("非法访问异常：{}",e);
             }catch (NoSuchMethodException e){
-                e.printStackTrace();
+				log.error("无本方法异常：{}",e);
             }catch (InvocationTargetException e){
-                e.printStackTrace();
+				log.error("目标调用异常：{}",e);
             }
         }, (TriggerContext triggerContext) -> {
             CronTrigger trigger=new CronTrigger(cron);

@@ -19,7 +19,7 @@
     <Encoding>UTF-8</Encoding>
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
       <!--日志文件输出的文件名-->
-      <FileNamePattern>${LOG_HOME}/cfencing.log.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+      <FileNamePattern>${LOG_HOME}/schedule.log.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
         <!--日志文件保留天数 -->
       <MaxHistory>60</MaxHistory>
       <!--日志文件最大的大小-->
@@ -56,12 +56,12 @@
       <appender-ref ref="druidFile" />
     </logger>
     <!--系统日志-->p_notice
-    <logger name="com.dynamic" level="debug" >
+    <logger name="com.dynamic" level="DEBUG" >
         <appender-ref ref="appLogAppender" />
     </logger>
    
   <!-- 日志输出级别  (DEBUG，INFO，WARN，ERROR，FATAL) -->
-  <root level="INFO">  
+  <root level="DEBUG">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>

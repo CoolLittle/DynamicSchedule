@@ -19,7 +19,7 @@ public class SpringWebConfig {
         // 设置线程池容量
         threadPoolTaskScheduler.setPoolSize(100);
         // 线程名前缀
-        threadPoolTaskScheduler.setThreadNamePrefix("task-dispatch-");
+        threadPoolTaskScheduler.setThreadNamePrefix("schedule-task-");
         threadPoolTaskScheduler.setAwaitTerminationSeconds(600);
         threadPoolTaskScheduler.setErrorHandler(throwable -> log.error("调度任务发生异常", throwable));
         // 当调度器shutdown被调用时等待当前被调度的任务完成

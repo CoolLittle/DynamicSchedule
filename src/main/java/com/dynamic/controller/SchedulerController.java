@@ -3,7 +3,7 @@ package com.dynamic.controller;
 import com.dynamic.constans.TaskCronConstants;
 import com.dynamic.handler.DynamicSchedulingHandler;
 import com.dynamic.util.HttpStatus;
-import com.dynamic.util.JsonResultObject;
+import com.dynamic.util.JsonResult;
 import com.dynamic.util.ScheduleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,34 +29,48 @@ public class SchedulerController {
      *        path 待执行的方法全路径名 示例：com.dynamic.customer.CustomerMethod.print
      * @return
      */
-    @PostMapping("/addscheduletask")
+    @PostMapping("/add-task")
     @ResponseBody
-    public JsonResultObject<Object> addScheduleTask(@RequestBody Map<String, String> param) {
-        JsonResultObject<Object> jsonResultObject = new JsonResultObject<>();
+    public JsonResult addScheduleTask(@RequestBody Map<String, String> param) {
+		JsonResult json = new JsonResult();
         String taskId = param.get("id");
         String cron = param.get("cron");
         String classPath = param.get("classPath");
         String methodName = param.get("methodName");
         if ("".equals(taskId) || "".equals(cron) ||"".equals(classPath) || "".equals(methodName)) {
-            jsonResultObject.setCode(HttpStatus.FAILURE.getValue());
-            jsonResultObject.setData(null);
-            jsonResultObject.setInfo(TaskCronConstants.ADD_FAIL.getMessage());
-            return jsonResultObject;
+            json.setCode(HttpStatus.FAILURE.getValue());
+            json.setInfo(TaskCronConstants.ADD_FAIL.getMessage());
+            return json;
         }
         try {
             TriggerTask triggerTask = ScheduleUtils.getTriggerTask(classPath,methodName,cron);
             handler.addTriggerTask(taskId,triggerTask);
         }catch (Exception e){
-            jsonResultObject.setCode(HttpStatus.FAILURE.getValue());
-            jsonResultObject.setData(null);
-            jsonResultObject.setInfo(TaskCronConstants.ADD_FAIL.getMessage());
+            json.setCode(HttpStatus.FAILURE.getValue());
+            json.setInfo(TaskCronConstants.ADD_FAIL.getMessage());
             log.error("添加定时任务异常：{}",e);
-            return jsonResultObject;
+            return json;
         }
-        jsonResultObject.setCode(HttpStatus.SUCCESS.getValue());
-        jsonResultObject.setData(null);
-        jsonResultObject.setInfo(TaskCronConstants.ADD_SUCCESS.getMessage());
-        return jsonResultObject;
+        json.setCode(HttpStatus.SUCCESS.getValue());
+        json.setInfo(TaskCronConstants.ADD_SUCCESS.getMessage());
+        return json;
+    }
+
+    @GetMapping("cancel-task")
+	@ResponseBody
+    public JsonResult cancelTask(@RequestParam(name = "taskId") String taskId){
+		JsonResult json = new JsonResult();
+		try{
+    		handler.cancelTriggerTask(taskId);
+		}catch (Exception e){
+			json.setCode(HttpStatus.FAILURE.getValue());
+			json.setInfo(TaskCronConstants.DEL_FAIL.getMessage());
+			log.error("取消定时任务异常：{}",e);
+			return json;
+		}
+		json.setCode(HttpStatus.SUCCESS.getValue());
+		json.setInfo(TaskCronConstants.DEL_SUCCESS.getMessage());
+		return json;
     }
 
     /**

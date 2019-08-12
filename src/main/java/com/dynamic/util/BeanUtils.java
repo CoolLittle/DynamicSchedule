@@ -78,11 +78,11 @@ public class BeanUtils {
      * @param clazz 类对象
      * @return Optional<Object>
      */
-    public static Optional<Object> newInstance(Class<?> clazz) {
+    public static Optional<Object> newInstance(Class<?> clazz,Object ... param) {
         Constructor[] constructors = clazz.getDeclaredConstructors();
         constructors[0].setAccessible(true);
         try {
-            return Optional.of(constructors[0].newInstance());
+			return Optional.of(constructors[0].newInstance(param));
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return Optional.empty();

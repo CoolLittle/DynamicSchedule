@@ -2,12 +2,14 @@ package com.dynamic.handler;
 
 import com.dynamic.constans.SpringScheduleConstants;
 import com.dynamic.util.BeanUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.SchedulingException;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.config.ScheduledTask;
+import org.springframework.scheduling.config.Task;
 import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
@@ -19,59 +21,39 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 @Component
+@Slf4j
 public class DynamicSchedulingHandler {
 
     @Autowired
     private TaskScheduler taskScheduler;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicSchedulingHandler.class);
-
-    private final String FIELD_SCHEDULED_FUTURES = SpringScheduleConstants.FIELD_SCHEDULED_FUTURES;
-
     private final Map<String, ScheduledTask> taskMap = new ConcurrentHashMap<>();
 
     private final Map<String, TriggerTask> triggerMap = new ConcurrentHashMap<>();
 
-    private Set<ScheduledTask> scheduledTasks = null;
-
-
-    private Set<ScheduledTask> getScheduledTasks() {
-        if (scheduledTasks == null) {
-            try {
-                scheduledTasks = (Set<ScheduledTask>) BeanUtils.getProperty(taskScheduler, FIELD_SCHEDULED_FUTURES);
-            } catch (NoSuchFieldException e) {
-                LOGGER.error(e.getMessage());
-                throw new SchedulingException(e.getMessage());
-            }
-        }
-        return scheduledTasks;
-    }
-
     /**
      * 添加任务
-     *
+     *	如果任务已经存在，则取消原任务，创建新任务
      * @param taskId
      * @param triggerTask
      */
     public void addTriggerTask(String taskId, TriggerTask triggerTask) {
-        if (taskMap.containsKey(taskId)) {
-            String message = "the taskId[".concat(taskId).concat("] was added.");
-            LOGGER.error(message);
-            throw new SchedulingException(message);
+        if (hasTask(taskId)) {
+            log.debug("the taskId [{}] was added，update triggerTask",taskId);
+			cancelTriggerTask(taskId);
         }
         TaskScheduler scheduler = taskScheduler;
         ScheduledFuture<?> future = scheduler.schedule(triggerTask.getRunnable(), triggerTask.getTrigger());
         try {
-            Optional<Object> instance = BeanUtils.newInstance(ScheduledTask.class);
+            Optional<Object> instance = BeanUtils.newInstance(ScheduledTask.class, triggerTask);
             if (instance.isPresent()) {
                 ScheduledTask scheduledTask = (ScheduledTask) instance.get();
                 BeanUtils.setFieldValue(scheduledTask, SpringScheduleConstants.FIELD_FUTURE_NAME, future);
-                getScheduledTasks().add(scheduledTask);
                 taskMap.put(taskId, scheduledTask);
                 triggerMap.put(taskId, triggerTask);
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+			log.error(e.getMessage());
         }
     }
 
@@ -85,8 +67,11 @@ public class DynamicSchedulingHandler {
         if (task != null) {
             task.cancel();
         }
-        taskMap.remove(taskId);
-        getScheduledTasks().remove(task);
+		TriggerTask triggerTask = triggerMap.get(taskId);
+        if(triggerTask !=null){
+			triggerMap.remove(taskId);
+		}
+		taskMap.remove(taskId);
     }
 
     /**
