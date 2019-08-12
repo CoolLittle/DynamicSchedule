@@ -17,7 +17,7 @@ public class SpringWebConfig {
     public TaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
         // 设置线程池容量
-        threadPoolTaskScheduler.setPoolSize(100);
+        threadPoolTaskScheduler.setPoolSize(20);
         // 线程名前缀
         threadPoolTaskScheduler.setThreadNamePrefix("schedule-task-");
         threadPoolTaskScheduler.setAwaitTerminationSeconds(600);
