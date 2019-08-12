@@ -59,7 +59,7 @@ public class SchedulerController {
         return json;
     }
 
-    @GetMapping("cancel-task")
+    @GetMapping("/cancel-task")
 	@ResponseBody
     public JsonResult cancelTask(@RequestParam(name = "taskId") String taskId){
 		JsonResult json = new JsonResult();
