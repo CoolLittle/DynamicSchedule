@@ -35,7 +35,7 @@ public class SchedulerController {
     @ResponseBody
     public JsonResult addScheduleTask(@RequestBody Map<String, String> param) {
 		JsonResult json = new JsonResult();
-        String taskId = param.get("id");
+        String taskId = param.get("taskId");
         String cron = param.get("cron");
         String classPath = param.get("classPath");
         String methodName = param.get("methodName");
@@ -77,23 +77,36 @@ public class SchedulerController {
 
     /**
      * 修改定时任务执行时间
-     * @param taskId 任务ID
-     * @param cron 执行时间
+     * @param  param { taskId:任务ID,cron:执行时间 }
      * @return
      */
-    @PostMapping("/reset")
-    public String resetTaskCron(@RequestParam("taskId") String taskId,
-                                @RequestParam("cron") String cron) {
+    @PostMapping("/reset-task")
+	@ResponseBody
+    public JsonResult resetTaskCron(@RequestBody Map<String, String> param) {
 
-        if ("".equals(taskId) || "".equals(cron)) {
-            return TaskCronConstants.RESET_FAIL.getMessage();
-        }
-        try {
-            handler.resetTriggerTask(taskId, cron);
-        }catch (Exception e){
-            log.error("修改定时任务异常：{}",e);
-        }
-        return TaskCronConstants.RESET_SUCCESS.getMessage();
+		JsonResult json = new JsonResult();
+		try{
+			String taskId = param.get("taskId");
+			String cron = param.get("cron");
+			if ("".equals(taskId) || "".equals(cron)) {
+				json.setCode(HttpStatus.FAILURE.getValue());
+				json.setInfo(TaskCronConstants.RESET_FAIL.getMessage());
+				return json;
+			}
+			try {
+				handler.resetTriggerTask(taskId, cron);
+			}catch (Exception e){
+				log.error("修改定时任务异常：{}",e);
+			}
+		}catch (Exception e){
+			json.setCode(HttpStatus.FAILURE.getValue());
+			json.setInfo(TaskCronConstants.DEL_FAIL.getMessage());
+			log.error("取消定时任务异常：{}",e);
+			return json;
+		}
+		json.setCode(HttpStatus.SUCCESS.getValue());
+		json.setInfo(TaskCronConstants.RESET_SUCCESS.getMessage());
+		return json;
     }
 }
 

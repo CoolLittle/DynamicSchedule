@@ -77,11 +77,16 @@ public class DynamicSchedulingHandler {
      * @param cron
      */
     public void resetTriggerTask(String taskId, String cron) {
-        cancelTriggerTask(taskId);
-        TriggerTask triggerTask = triggerMap.get(taskId);
+
+    	if(!hasTask(taskId)){
+    		return;
+		}
+    	TriggerTask triggerTask = triggerMap.get(taskId);
+		cancelTriggerTask(taskId);
         CronTrigger cronTrigger = new CronTrigger(cron);
         BeanUtils.setFieldValue(triggerTask, SpringScheduleConstants.FIELD_TRIGGER_NAME, cronTrigger);
         addTriggerTask(taskId, triggerTask);
+
     }
 
     /**
