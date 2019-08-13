@@ -28,9 +28,4 @@ public class SpringWebConfig {
         threadPoolTaskScheduler.setRemoveOnCancelPolicy(true);
         return threadPoolTaskScheduler;
     }
-    @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-        return multipartResolver;
-    }
 }

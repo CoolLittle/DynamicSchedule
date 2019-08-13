@@ -1,16 +1,18 @@
-package com.dynamic.controller;
+package com.dynamic.moduler.controller;
 
 import com.dynamic.constans.TaskCronConstants;
-import com.dynamic.handler.DynamicSchedulingHandler;
+import com.dynamic.moduler.entity.TaskScheduleEntity;
+import com.dynamic.moduler.service.ITaskScheduleService;
+import com.dynamic.moduler.vo.TaskScheduleVo;
 import com.dynamic.util.HttpStatus;
 import com.dynamic.util.JsonResult;
-import com.dynamic.util.ScheduleUtils;
+import com.dynamic.util.JsonResultObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RequestMapping(value = "/scheduled")
@@ -18,14 +20,12 @@ import java.util.Map;
 @Slf4j
 public class SchedulerController {
 
-    @Autowired
-    private DynamicSchedulingHandler handler;
-    @Autowired
-    private ScheduleUtils scheduleUtils;
+	@Autowired
+	private ITaskScheduleService taskScheduleService;
 
 	/**
 	 * 添加新的定时任务
-	 * @param param
+	 * @param taskScheduleVo
 	 *        taskId 任务ID
 	 *        cron 执行时间 示例：0 0/1 * 21 8 ?
 	 *        classPath 待执行的方法全路径名 示例：com.dynamic.customer.CustomerMethod
@@ -34,20 +34,17 @@ public class SchedulerController {
 	 */
     @PostMapping("/add-task")
     @ResponseBody
-    public JsonResult addScheduleTask(@RequestBody Map<String, String> param) {
+    public JsonResult addScheduleTask(@RequestBody TaskScheduleVo taskScheduleVo) {
+
 		JsonResult json = new JsonResult();
-        String taskId = param.get("taskId");
-        String cron = param.get("cron");
-        String classPath = param.get("classPath");
-        String methodName = param.get("methodName");
-        if ("".equals(taskId) || "".equals(cron) ||"".equals(classPath) || "".equals(methodName)) {
+        if ("".equals(taskScheduleVo.getClassPath()) || "".equals(taskScheduleVo.getMethodName())
+				|| "".equals(taskScheduleVo.getCron())) {
             json.setCode(HttpStatus.FAILURE.getValue());
             json.setInfo(TaskCronConstants.ADD_FAIL.getMessage());
             return json;
         }
         try {
-            TriggerTask triggerTask = scheduleUtils.getTriggerTask(classPath,methodName,cron);
-            handler.addTriggerTask(taskId,triggerTask);
+			taskScheduleService.addTask(taskScheduleVo);
         }catch (Exception e){
             json.setCode(HttpStatus.FAILURE.getValue());
             json.setInfo(TaskCronConstants.ADD_FAIL.getMessage());
@@ -59,12 +56,70 @@ public class SchedulerController {
         return json;
     }
 
-    @GetMapping("/cancel-task")
+    @GetMapping("/get-task")
 	@ResponseBody
-    public JsonResult cancelTask(@RequestParam(name = "taskId") String taskId){
+    public JsonResult getTask(@RequestParam(name = "taskId") Integer taskId){
+
+		JsonResult json = new JsonResultObject();
+		try{
+			TaskScheduleEntity entity = taskScheduleService.getById(taskId);
+			((JsonResultObject) json).setData(entity);
+		}catch (Exception e){
+			json.setCode(HttpStatus.FAILURE.getValue());
+			json.setInfo(TaskCronConstants.GET_FAIL.getMessage());
+			log.error("获取定时任务异常：{}",e);
+			return json;
+		}
+		json.setCode(HttpStatus.SUCCESS.getValue());
+		json.setInfo(TaskCronConstants.GET_SUCCESS.getMessage());
+		return json;
+    }
+
+    @GetMapping("/list-task")
+	@ResponseBody
+    public JsonResult listTask(){
+
+		JsonResult json = new JsonResultObject<>();
+		try{
+			List<TaskScheduleEntity> list = taskScheduleService.list();
+			((JsonResultObject) json).setData(list);
+		}catch (Exception e){
+			json.setCode(HttpStatus.FAILURE.getValue());
+			json.setInfo(TaskCronConstants.GET_FAIL.getMessage());
+			log.error("获取定时任务异常：{}",e);
+			return json;
+		}
+
+		json.setCode(HttpStatus.SUCCESS.getValue());
+		json.setInfo(TaskCronConstants.GET_SUCCESS.getMessage());
+		return json;
+    }
+
+    @GetMapping("/execute-task")
+	@ResponseBody
+    public JsonResult executeTask(@RequestParam(name = "taskId") Integer taskId){
+
 		JsonResult json = new JsonResult();
 		try{
-    		handler.cancelTriggerTask(taskId);
+			taskScheduleService.executeTask(taskId);
+		}catch (Exception e){
+			json.setCode(HttpStatus.FAILURE.getValue());
+			json.setInfo(TaskCronConstants.EXC_FAIL.getMessage());
+			log.error("执行定时任务异常：{}",e);
+			return json;
+		}
+		json.setCode(HttpStatus.SUCCESS.getValue());
+		json.setInfo(TaskCronConstants.EXC_SUCCESS.getMessage());
+		return json;
+    }
+
+    @GetMapping("/cancel-task")
+	@ResponseBody
+    public JsonResult cancelTask(@RequestParam(name = "taskId") Integer taskId){
+
+		JsonResult json = new JsonResult();
+		try{
+			taskScheduleService.cancelTask(taskId);
 		}catch (Exception e){
 			json.setCode(HttpStatus.FAILURE.getValue());
 			json.setInfo(TaskCronConstants.DEL_FAIL.getMessage());
@@ -95,7 +150,7 @@ public class SchedulerController {
 				return json;
 			}
 			try {
-				handler.resetTriggerTask(taskId, cron);
+				taskScheduleService.resetCorn(Integer.valueOf(taskId), cron);
 			}catch (Exception e){
 				log.error("修改定时任务异常：{}",e);
 			}

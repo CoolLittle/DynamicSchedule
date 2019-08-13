@@ -23,9 +23,9 @@ public class DynamicSchedulingHandler {
     @Autowired
     private TaskScheduler taskScheduler;
 
-    private final Map<String, ScheduledTask> taskMap = new ConcurrentHashMap<>();
+    private final Map<Integer, ScheduledTask> taskMap = new ConcurrentHashMap<>();
 
-    private final Map<String, TriggerTask> triggerMap = new ConcurrentHashMap<>();
+    private final Map<Integer, TriggerTask> triggerMap = new ConcurrentHashMap<>();
 
     /**
      * 添加任务
@@ -33,7 +33,7 @@ public class DynamicSchedulingHandler {
      * @param taskId
      * @param triggerTask
      */
-    public void addTriggerTask(String taskId, TriggerTask triggerTask) {
+    public void addTriggerTask(Integer taskId, TriggerTask triggerTask) {
         if (hasTask(taskId)) {
             log.debug("the taskId [{}] was added，update triggerTask",taskId);
 			cancelTriggerTask(taskId);
@@ -58,7 +58,7 @@ public class DynamicSchedulingHandler {
      *
      * @param taskId
      */
-    public void cancelTriggerTask(String taskId) {
+    public void cancelTriggerTask(Integer taskId) {
         ScheduledTask task = taskMap.get(taskId);
         if (task != null) {
             task.cancel();
@@ -76,7 +76,7 @@ public class DynamicSchedulingHandler {
      * @param taskId
      * @param cron
      */
-    public void resetTriggerTask(String taskId, String cron) {
+    public void resetTriggerTask(Integer taskId, String cron) {
 
     	if(!hasTask(taskId)){
     		return;
@@ -94,7 +94,7 @@ public class DynamicSchedulingHandler {
      *
      * @return
      */
-    public Set<String> taskIds() {
+    public Set<Integer> taskIds() {
         return taskMap.keySet();
     }
 
@@ -104,7 +104,7 @@ public class DynamicSchedulingHandler {
      * @param taskId
      * @return
      */
-    public boolean hasTask(String taskId) {
+    public boolean hasTask(Integer taskId) {
         return this.taskMap.containsKey(taskId);
     }
 
