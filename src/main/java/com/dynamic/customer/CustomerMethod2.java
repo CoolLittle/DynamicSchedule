@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomerMethod2 {
 
-	public void print(){
+	public void print(Object[] a){
 		System.out.println("已经注入过的Bean");
 	}
 

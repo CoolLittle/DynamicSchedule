@@ -2,9 +2,9 @@ package com.dynamic.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @description:
@@ -17,7 +17,7 @@ public class JsonKitTest {
 	@Test
 	public void parseObject() throws Exception {
 
-		String str = "[{\"Type\":\"String\",\"Value\":\"a1\"}]";
+		String str = "[{\"Type\":\"Object[]\",\"Value\":\"1,2,3\"}]";
 
 		List<Map<String,Object>> list = JsonKit.parseArray(str);
 
@@ -27,9 +27,10 @@ public class JsonKitTest {
 		for (Map<String,Object> m : list){
 			types[i] = BeanUtils.convert(m.get("Type").toString());
 			values[i] = m.get("Value");
+
 			i++;
 		}
-
+		Arrays.toString(types);
 		log.info("{}",list);
 	}
 }

@@ -108,14 +108,19 @@ public class BeanUtils {
     }
 
     public static Class convert(String str){
-    	if("String".equals(str)|| "string".equals(str)){
-    		return String.class;
-		}else if("Integer".equals(str)|| "int".equals(str)){
-    		return Integer.class;
-		}else if("Boolean".equals(str)|| "boolean".equals(str)){
+
+		if("String".equals(str)|| "string".equals(str)){
+			return String.class;
+		}else if("Integer".equals(str)){
+			return Integer.class;
+		}else if("int".equals(str)){
+			return int.class;
+		}else if("Boolean".equals(str)){
 			return Boolean.class;
-		}else {
-    		return null;
+		}else if("boolean".equals(str)){
+			return boolean.class;
+		}else{
+			return null;
 		}
 	}
 }
