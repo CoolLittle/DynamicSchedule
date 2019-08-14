@@ -43,6 +43,15 @@ public class TaskScheduleDao {
 		String sql = " select * from  p_task_schedule ";
 		return jdbcTemplate.query(sql,new TaskScheduleEntity());
 	}
+	/**
+	 * 获取所有定时任务
+	 * @return
+	 */
+	public List<TaskScheduleEntity> select(Integer status){
+		String sql = " select * from  p_task_schedule where execute_status = ?";
+		Object[] param = {status};
+		return jdbcTemplate.query(sql,param,new TaskScheduleEntity());
+	}
 
 	/**
 	 * 添加

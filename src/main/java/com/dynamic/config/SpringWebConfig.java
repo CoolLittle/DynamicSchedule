@@ -1,5 +1,6 @@
 package com.dynamic.config;
 
+import com.dynamic.moduler.service.ITaskScheduleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.*;
 import org.springframework.scheduling.TaskScheduler;
@@ -28,4 +29,11 @@ public class SpringWebConfig {
         threadPoolTaskScheduler.setRemoveOnCancelPolicy(true);
         return threadPoolTaskScheduler;
     }
+
+	@Bean(initMethod = "init")
+	@Lazy(value = false)
+	public InitBean init(ITaskScheduleService taskScheduleService) {
+    	return new InitBean(taskScheduleService);
+	}
+
 }

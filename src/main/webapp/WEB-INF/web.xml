@@ -3,17 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
-    <display-name>schhedule</display-name>
-    <!-- 文件访问路径 前缀 -->
-    <!--<context-param>
-        <param-name>fileServerUrl</param-name>
-        <param-value>http://img.*.com</param-value>
-    </context-param>-->
-    <!-- 文件上传路径 -->
-    <!--<context-param>
-        <param-name>fileUploadPath</param-name>
-        <param-value>/mnt/disk/9999/ROOT</param-value>
-    </context-param>-->
+    <display-name>dynamic-schedule</display-name>
 
     <!--连接池启用Web监控统计功能start-->
 
@@ -58,7 +48,6 @@
         <servlet-name>spring</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-
     <!-- 过滤器 -->
     <!-- 字符过滤器 -->
     <filter>
@@ -75,21 +64,6 @@
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-    <!-- 登录过滤器 -->
-    <!--<filter>
-        <filter-name>SessionFilter</filter-name>
-        <filter-class></filter-class>
-        <init-param>
-            <param-name>oatuhUrl</param-name>
-            <param-value>/myresource/,/druid,/resource/,/login.jsp,/common.jsp,/common/</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>SessionFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    -->
 
     <filter>
         <filter-name>DruidWebStatFilter</filter-name>

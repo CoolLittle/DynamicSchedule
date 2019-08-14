@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @description:
@@ -88,6 +89,26 @@ public class TaskScheduleServiceImpl implements ITaskScheduleService {
 		taskScheduleDao.updateStatus(id,TaskStatusConstants.未执行.getValue());
 		schedulingHandler.cancelTriggerTask(id);
 		return true;
+	}
+
+	/**
+	 * 重新开始启动执行任务
+	 *
+	 * @return
+	 */
+	@Override
+	public void startup() throws Exception {
+
+		// 获取现有运行的定时器
+		Set<Integer> ids = schedulingHandler.taskIds();
+		for (Integer id : ids){
+			schedulingHandler.cancelTriggerTask(id);
+		}
+		// 启动在运行状态的定时器
+		List<TaskScheduleEntity> list = taskScheduleDao.select(TaskStatusConstants.执行.getValue());
+		for(TaskScheduleEntity t : list){
+			executeTask(t.getTaskId());
+		}
 	}
 
 	/**

@@ -51,6 +51,13 @@ public interface ITaskScheduleService {
 	 * @return
 	 */
 	boolean cancelTask(Integer id) throws Exception;
+
+	/**
+	 * 服务器启动后执行任务
+	 * @return
+	 */
+	void startup() throws Exception;
+
 	/**
 	 * 重置任务执行时间
 	 * @return

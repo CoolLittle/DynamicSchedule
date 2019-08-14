@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dynamicschedule</groupId>
-    <artifactId>dynamicschedule</artifactId>
+    <artifactId>dynamic-schedule</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>admin Maven Webapp</name>
