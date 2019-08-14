@@ -6,11 +6,17 @@ import com.dynamic.moduler.dao.TaskScheduleDao;
 import com.dynamic.moduler.entity.TaskScheduleEntity;
 import com.dynamic.moduler.service.ITaskScheduleService;
 import com.dynamic.moduler.vo.TaskScheduleVo;
+import com.dynamic.util.BeanUtils;
+import com.dynamic.util.JsonKit;
 import com.dynamic.util.ScheduleUtils;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -69,7 +75,25 @@ public class TaskScheduleServiceImpl implements ITaskScheduleService {
 	public boolean executeTask(Integer id) throws Exception{
 
 		TaskScheduleEntity taskScheduleEntity = getById(id);
-		TriggerTask triggerTask = scheduleUtils.getTriggerTask(taskScheduleEntity.getClassPath(),taskScheduleEntity.getMethodName(),taskScheduleEntity.getCron());
+
+		Class[] types = null;
+		Object[] param = null;
+		if(taskScheduleEntity.getParam() !=null && !"".equals(taskScheduleEntity.getParam())){
+
+			List<Map<String,Object>> list = JsonKit.parseArray(taskScheduleEntity.getParam());
+			if(list!=null){
+				types = new Class[list.size()];
+				param = new Object[list.size()];
+				int i = 0;
+				for (Map<String,Object> m : list){
+					types[i] = BeanUtils.convert(m.get("Type").toString());
+					param[i] = m.get("Value");
+					i++;
+				}
+			}
+		}
+		TriggerTask triggerTask = scheduleUtils.getTriggerTask(taskScheduleEntity.getClassPath(),
+				taskScheduleEntity.getMethodName(),taskScheduleEntity.getCron(),types,param);
 		schedulingHandler.addTriggerTask(id,triggerTask);
 		// 设置为取消状态
 		taskScheduleDao.updateStatus(id,TaskStatusConstants.执行.getValue());

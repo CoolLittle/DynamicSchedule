@@ -19,7 +19,7 @@ public class ScheduleUtils {
 	@Autowired
 	private ApplicationContext applicationContext;
 
-    public TriggerTask getTriggerTask(String classPath,String methodName, String cron) throws Exception{
+    public TriggerTask getTriggerTask(String classPath,String methodName, String cron,Class[] types,Object[] params) throws Exception{
 
 		Runnable runnable ;
     	try {
@@ -47,8 +47,8 @@ public class ScheduleUtils {
 					if(object == null){
 						object = clazz.newInstance();
 					}
-					Method method = clazz.getMethod(methodName);
-					method.invoke(object,null);
+					Method method = clazz.getMethod(methodName,types);
+					method.invoke(object,params);
 				}catch (InstantiationException e){
 					log.error("定时器执行类初始化异常：{}",e);
 				}catch (IllegalAccessException e){

@@ -1,5 +1,6 @@
 package com.dynamic.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,4 +106,16 @@ public class BeanUtils {
             LOGGER.error(e.getMessage());
         }
     }
+
+    public static Class convert(String str){
+    	if("String".equals(str)|| "string".equals(str)){
+    		return String.class;
+		}else if("Integer".equals(str)|| "int".equals(str)){
+    		return Integer.class;
+		}else if("Boolean".equals(str)|| "boolean".equals(str)){
+			return Boolean.class;
+		}else {
+    		return null;
+		}
+	}
 }

@@ -9,7 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomerMethod {
 
     public void print(){
-        log.info("11111111111111111111111打印输出！！！");
+        log.info("11111111111111111111111打印输出！！！测试无参数");
+    }
+    public void print(String a){
+        log.info("11111111111111111111111打印输出！！！测试有参数"+a);
     }
     public void print2(){
         log.info("2222222222222222222222打印输出！！！");
