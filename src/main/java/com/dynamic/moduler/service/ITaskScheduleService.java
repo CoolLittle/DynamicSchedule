@@ -34,6 +34,15 @@ public interface ITaskScheduleService {
 	boolean addTask(TaskScheduleVo taskScheduleVo) throws Exception;
 
 	/**
+	 * 修改定时任务
+	 * @param taskScheduleVo
+	 * @return
+	 * @throws Exception
+	 */
+	boolean updateTask(TaskScheduleVo taskScheduleVo) throws Exception;
+
+
+	/**
 	 * 删除任务
 	 * @param id
 	 * @return
@@ -45,6 +54,12 @@ public interface ITaskScheduleService {
 	 * @return
 	 */
 	boolean executeTask(Integer id) throws Exception;
+
+	/**
+	 * 手动执行任务
+	 * @return
+	 */
+	boolean manualExecuteTask(Integer id) throws Exception;
 
 	/**
 	 * 取消执行任务

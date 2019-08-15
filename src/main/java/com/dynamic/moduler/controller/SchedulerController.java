@@ -56,6 +56,30 @@ public class SchedulerController {
         return json;
     }
 
+	@PostMapping("/update-task")
+	@ResponseBody
+	public JsonResult updateScheduleTask(@RequestBody TaskScheduleVo taskScheduleVo) {
+
+		JsonResult json = new JsonResult();
+		if ("".equals(taskScheduleVo.getClassPath()) || "".equals(taskScheduleVo.getMethodName())
+				|| "".equals(taskScheduleVo.getCron())) {
+			json.setCode(HttpStatus.FAILURE.getValue());
+			json.setInfo(TaskCronConstants.UPD_FAIL.getMessage());
+			return json;
+		}
+		try {
+			taskScheduleService.updateTask(taskScheduleVo);
+		}catch (Exception e){
+			json.setCode(HttpStatus.FAILURE.getValue());
+			json.setInfo(TaskCronConstants.UPD_FAIL.getMessage());
+			log.error("添加定时任务异常：{}",e);
+			return json;
+		}
+		json.setCode(HttpStatus.SUCCESS.getValue());
+		json.setInfo(TaskCronConstants.UPD_SUCCESS.getMessage());
+		return json;
+	}
+
     @GetMapping("/get-task")
 	@ResponseBody
     public JsonResult getTask(@RequestParam(name = "taskId") Integer taskId){
@@ -128,6 +152,28 @@ public class SchedulerController {
 		}
 		json.setCode(HttpStatus.SUCCESS.getValue());
 		json.setInfo(TaskCronConstants.DEL_SUCCESS.getMessage());
+		return json;
+    }
+
+    @GetMapping("/manual-task")
+	@ResponseBody
+    public JsonResult manualTask(@RequestParam(name = "taskId") Integer taskId){
+
+		JsonResult json = new JsonResult();
+		try{
+			boolean flag = taskScheduleService.manualExecuteTask(taskId);
+			if(flag){
+				json.setInfo("手动执行成功");
+			}else {
+				json.setInfo("手动执行失败");
+			}
+		}catch (Exception e){
+			json.setCode(HttpStatus.FAILURE.getValue());
+			json.setInfo(TaskCronConstants.EXC_FAIL.getMessage());
+			log.error("手动执行定时任务异常：{}",e);
+			return json;
+		}
+		json.setCode(HttpStatus.SUCCESS.getValue());
 		return json;
     }
 

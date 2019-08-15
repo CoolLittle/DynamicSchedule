@@ -11,6 +11,11 @@ import lombok.Data;
 public class TaskScheduleVo {
 
 	/**
+	 * 任务ID
+	 */
+	private Integer taskId;
+
+	/**
 	 * 任务名称
 	 */
 	private String taskName;

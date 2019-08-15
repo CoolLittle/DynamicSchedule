@@ -83,6 +83,22 @@ public class TaskScheduleDao {
 	}
 
 	/**
+	 * 更新定时任务
+	 * @param taskName
+	 * @param param
+	 * @param classPath
+	 * @param methodName
+	 * @param cron
+	 * @return
+	 */
+	public Integer updateEntity(Integer taskId,String taskName,String param,String classPath,String methodName,String cron){
+
+		String sql = " update  p_task_schedule set task_name = ?, param = ?, class_path = ?, method_name = ?, cron = ? where task_id = ? ";
+		Object[] params = {taskName,param,classPath,methodName,cron,taskId};
+		return jdbcTemplate.update(sql,params);
+	}
+
+	/**
 	 * 更新状态
 	 * @param taskId
 	 * @param status
