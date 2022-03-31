@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <service.version>0.0.1-SNAPSHOT</service.version>
         <jdk.version>1.8</jdk.version>
-        <spring.version>5.1.1.RELEASE</spring.version>
+        <spring.version>5.3.18</spring.version>
         <jstl.version>1.2</jstl.version>
         <servletapi.version>2.5</servletapi.version>
         <logback.version>1.2.3</logback.version>
