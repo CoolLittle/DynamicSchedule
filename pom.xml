@@ -24,7 +24,7 @@
         <logback.version>1.2.3</logback.version>
         <aspectj.version>1.8.13</aspectj.version>
         <jcl-over-slf4j.version>1.7.5</jcl-over-slf4j.version>
-        <jdbc-mysql.version>5.1.38</jdbc-mysql.version>
+        <jdbc-mysql.version>8.0.28</jdbc-mysql.version>
         <druid.version>1.1.10</druid.version>
         <lombok.version>1.16.18</lombok.version>
     </properties>
